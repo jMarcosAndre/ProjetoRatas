@@ -137,3 +137,43 @@ model TOTG {
 
   rata Rata @relation(fields: [rataId], references: [id])
 }
+
+model EstresseOxidativo {
+  id          Int     @id @deafult(autoincrement())
+  absorsanciaAmostra Float // média da Absorbância da amostra menos a média da Absorbância do BRANCO
+  proteinaTotal Float // Hb ou PTN mass = massa de hemoglobina ou proteína total (em mg) no ensaio.
+  concentracaoHemoglobina Float // Resultado
+  Cálculo da concentração de substâncias reativas ao ácido tiobarbitúrico Float //Resultado - Como coloco o nome ?
+  concentração de grupos tióis reduzidos // Resultado
+  Cálculo da concentração de superóxido dismutase // Resultado - Como coloco o nome ? - Quais variáveis utilizadas
+  Cálculo da concentração de peróxido de hidrogênio // Resultado - Como coloco o nome ? Utiliza A e Hb
+
+  
+  rataid Int @unique
+
+  // Poder escolher qual calculo sera feito a partir da insercao do 'a'
+  // Perguntar se tem algum calculo que é padrão.
+  // Perguntar sobre o calculo A, se os valores necessários devem ser inseridos.
+  // Perguntar calculo do IV até o VI.
+
+  rata Rata @relation(fields: [rataid], references: [id])
+}
+
+model DosagensBioquimicas {
+  id          Int     @id @default(autoincrement())
+  absorsanciaAmostra Float 
+  absorsanciaPadrao Float // 200/p = f -> f x A
+  concentracaoTriglicerides Float // Resultado
+
+  concentracaoColesterolTotal Float // Resultado - Perguntar sobre o calculo
+  
+  concentracaoGPT Float //Resultado - utiliza o A - Perguntar sobre o calculo
+  concentracaoVLDL // Resultado - concentracaoTriglicerides/5
+
+
+  rataid Int @unique
+
+  rata Rata @relation(fields: [rataid], references: [id])
+
+
+}
