@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../src"
 }
 
 datasource db {
@@ -33,7 +33,7 @@ model User {
   id                  Int           @id @default(autoincrement())
   nome                String
   email               String        @unique
-  senhaHash           String
+  password            String
   roleSistema         SistemaRole   
   
   projetoResponsavel  Projeto    
@@ -43,7 +43,7 @@ model User {
 
 model Projeto {
   id                   Int           @id @default(autoincrement())
-  nome                 String
+  nome                 StringS
   descricao            String?
   
   responsavelProjetoId Int           @unique 
@@ -64,24 +64,30 @@ model ProjetoRole {
   @@unique([userId, projetoId]) 
 }
 model Rata {
-  id             Int          @id @default(autoincrement())
-  numero         Int          @unique
-  linhagem       String
-  prenhez        Boolean      @default(false)
-  dataNascimento DateTime
-  createdAt      DateTime     @default(now())
-
-  fetos          Feto[]
-  historicoDados DadosGerais[]
+  id                   Int           @id @default(autoincrement())
+  identificacao        Int 
+  numero               Int           @unique
+  linhagem             String
+  prenhez              Boolean       @default(false)
+  dataNascimento       DateTime
+  dataFinalExperimento DateTime
+  inclusao             Boolean       
+  morte                Boolean?      
   
-  // RELAÇÕES 1:1
-  gestacao          Gestacao?
-  totg              TOTG?
-  bioquimica        Bioquimica?
-  estresseOxidativo EstresseOxidativo?
+  fetos                Feto[]
+  historicoDados       DadosGerais[]
+  gestacao             Gestacao?
+  totg                 TOTG?         // Agora opcional
+  bioquimica           DosagensBioquimicas?
+  estresseOxidativo    EstresseOxidativo?
 
-  grupoId Int
-  grupo   Grupo @relation(fields: [grupoId], references: [id])
+  grupoId              Int 
+  grupo                Grupo         @relation(fields: [grupoId], references: [id])
+}
+
+model Grupo {
+  id Int @id @default(autoincrement())
+  nomeGrupo String
 }
 
 model Gestacao {
@@ -133,7 +139,7 @@ model TOTG {
   t30         Float
   t60         Float
   t120        Float
-  diagnostico String?
+  diagnostico String? //Controle, DMod
 
   rata Rata @relation(fields: [rataId], references: [id])
 }
@@ -143,19 +149,11 @@ model EstresseOxidativo {
   absorsanciaAmostra Float // média da Absorbância da amostra menos a média da Absorbância do BRANCO
   proteinaTotal Float // Hb ou PTN mass = massa de hemoglobina ou proteína total (em mg) no ensaio.
   concentracaoHemoglobina Float // Resultado
-  Cálculo da concentração de substâncias reativas ao ácido tiobarbitúrico Float //Resultado - Como coloco o nome ?
-  concentração de grupos tióis reduzidos // Resultado
-  Cálculo da concentração de superóxido dismutase // Resultado - Como coloco o nome ? - Quais variáveis utilizadas
-  Cálculo da concentração de peróxido de hidrogênio // Resultado - Como coloco o nome ? Utiliza A e Hb
-
+  tbars Float //Resultado
+  tioisReduzidos Float // Resultado
+  peroxidoHidrogenio Float // Resultado
   
   rataid Int @unique
-
-  // Poder escolher qual calculo sera feito a partir da insercao do 'a'
-  // Perguntar se tem algum calculo que é padrão.
-  // Perguntar sobre o calculo A, se os valores necessários devem ser inseridos.
-  // Perguntar calculo do IV até o VI.
-
   rata Rata @relation(fields: [rataid], references: [id])
 }
 
@@ -164,16 +162,12 @@ model DosagensBioquimicas {
   absorsanciaAmostra Float 
   absorsanciaPadrao Float // 200/p = f -> f x A
   concentracaoTriglicerides Float // Resultado
-
-  concentracaoColesterolTotal Float // Resultado - Perguntar sobre o calculo
-  
-  concentracaoGPT Float //Resultado - utiliza o A - Perguntar sobre o calculo
-  concentracaoVLDL // Resultado - concentracaoTriglicerides/5
+  concentracaoColesterolTotal Float // Resultado
+  concentracaoGPT Float //Resultado
+  concentracaoVLDL Float // Resultado - concentracaoTriglicerides/5
 
 
   rataid Int @unique
 
   rata Rata @relation(fields: [rataid], references: [id])
-
-
 }

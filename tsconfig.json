@@ -1,35 +1,27 @@
 {
   "compilerOptions": {
-    /* Layout do Projeto */
-    "rootDir": "./src",                          /* Onde você vai escrever o código */
-    "outDir": "./dist",                         /* Para onde o código vai após o build */
-
-    /* Configurações de Ambiente */
-    "module": "nodenext",
-    "target": "esnext",
-    "lib": ["esnext", "dom"],                   /* Adicionado "dom" caso use React no mesmo projeto */
-    "types": ["node"],                          /* Garante que o TS reconheça comandos do Node */
-
-    /* Saídas de Debug */
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-
-    /* Checagem Estrita (Essencial para dados do PIBIC) */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,                  /* Ativado para evitar funções sem retorno */
-    "noUnusedLocals": true,                     /* Limpeza de código: avisa se houver variáveis inúteis */
-
-    /* Integração com React e Bibliotecas Modernas */
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
     "jsx": "react-jsx",
-    "esModuleInterop": true,                    /* Necessário para importar bibliotecas como Express */
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src/**/*"],                      /* Diz ao TS para olhar apenas a pasta src */
-  "exclude": ["node_modules", "dist"]           /* Ignora o que não deve ser compilado */
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
