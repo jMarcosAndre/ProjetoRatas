@@ -4,11 +4,10 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon --loader ts-node/esm src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "prisma:studio": "npx prisma studio",
-    "prisma:migrate": "npx prisma migrate dev"
+    "setup": "npx prisma generate && npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +24,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^7.4.1",
+    "@prisma/client": "^7.5.0",
     "date-fns": "^4.1.0",
     "express": "^5.2.1",
     "googleapis": "^171.4.0",

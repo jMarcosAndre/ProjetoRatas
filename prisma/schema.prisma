@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src"
+  provider = "prisma-client"
 }
 
 datasource db {
@@ -145,7 +144,7 @@ model TOTG {
 }
 
 model EstresseOxidativo {
-  id          Int     @id @deafult(autoincrement())
+  id          Int     @id @default(autoincrement())
   absorsanciaAmostra Float // média da Absorbância da amostra menos a média da Absorbância do BRANCO
   proteinaTotal Float // Hb ou PTN mass = massa de hemoglobina ou proteína total (em mg) no ensaio.
   concentracaoHemoglobina Float // Resultado
