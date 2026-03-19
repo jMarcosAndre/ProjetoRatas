@@ -7,7 +7,9 @@
     "dev": "nodemon --loader ts-node/esm src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "setup": "npx prisma generate && npx prisma migrate dev"
+    "setup": "npx prisma generate && npx prisma migrate dev",
+    "prisma: generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
   "keywords": [],
   "author": "",

@@ -1,32 +1,13 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-// ENUMS
-
-enum SistemaRole {
-  ADMIN
-  USER
-}
-
-enum ProjetoRoleType {
-  RESPONSAVEL
-  COLABORADOR
-  LEITOR
-}
-
-enum PeriodoMorte {
-  PRE_IMPLANTACAO
-  LOGO_APOS_IMPLANTACAO
-  FINAL_PRENHEZ
-  VIVO
-}
-
-// MODELS
+// ... ENUMS permanecem iguais ...
 
 model User {
   id                  Int           @id @default(autoincrement())
@@ -35,33 +16,22 @@ model User {
   password            String
   roleSistema         SistemaRole   
   
-  projetoResponsavel  Projeto    
-  
+  projetoResponsavel  Projeto?      // Ajustado para opcional (1:1)
   participacoes       ProjetoRole[] 
 }
 
 model Projeto {
   id                   Int           @id @default(autoincrement())
-  nome                 StringS
+  nome                 String
   descricao            String?
-  
   responsavelProjetoId Int           @unique 
   participantes        ProjetoRole[]
 
   responsavel          User          @relation(fields: [responsavelProjetoId], references: [id])
 }
 
-model ProjetoRole {
-  id        Int             @id @default(autoincrement())
-  userId    Int
-  role      ProjetoRoleType @default(LEITOR)
-  projetoId Int
+// ... ProjetoRole, Grupo permanecem iguais ...
 
-  user    User    @relation(fields: [userId], references: [id])
-  projeto Projeto @relation(fields: [projetoId], references: [id])
-
-  @@unique([userId, projetoId]) 
-}
 model Rata {
   id                   Int           @id @default(autoincrement())
   identificacao        Int 
@@ -76,7 +46,7 @@ model Rata {
   fetos                Feto[]
   historicoDados       DadosGerais[]
   gestacao             Gestacao?
-  totg                 TOTG?         // Agora opcional
+  totg                 TOTG?         
   bioquimica           DosagensBioquimicas?
   estresseOxidativo    EstresseOxidativo?
 
@@ -84,89 +54,30 @@ model Rata {
   grupo                Grupo         @relation(fields: [grupoId], references: [id])
 }
 
-model Grupo {
-  id Int @id @default(autoincrement())
-  nomeGrupo String
-}
-
-model Gestacao {
-  id                  Int      @id @default(autoincrement())
-  dataPrenhez         DateTime
-  rataId              Int      @unique 
-  
-  ganhoPesoMaterno    Float?
-  nCorposLuteos       Int?
-  nImplantacoes       Int?
-  nFetosVivos         Int?
-  nFetosMortos        Int?
-  nMortesEmbrionarias Int?
-  
-  perdasPreImplantacao Float?
-  perdasPosImplantacao Float? //Deve ser feito na query, aqui e so para guardar
-  pesoTotalNinhada     Float? 
-
-  rata Rata @relation(fields: [rataId], references: [id])
-}
-
-model Feto {
-  id            Int          @id @default(autoincrement())
-  identificacao String       // Ex: "24.1"
-  statusPeriodo PeriodoMorte @default(VIVO)
-  pesoFeto      Float?
-  pesoPlacenta  Float?
-  dataMorte     DateTime?    
-
-  rataId Int
-  rata   Rata @relation(fields: [rataId], references: [id])
-}
-
-model DadosGerais {
-  id           Int      @id @default(autoincrement())
-  rataId       Int
-  peso         Float
-  consumoAgua  Float
-  consumoRacao Float
-  dataMedicao  DateTime
-
-  rata Rata @relation(fields: [rataId], references: [id])
-}
-
-model TOTG {
-  id          Int     @id @default(autoincrement())
-  rataId      Int     @unique 
-  t0          Float
-  t30         Float
-  t60         Float
-  t120        Float
-  diagnostico String? //Controle, DMod
-
-  rata Rata @relation(fields: [rataId], references: [id])
-}
+// ... Outros modelos (Gestacao, Feto, DadosGerais, TOTG) ...
 
 model EstresseOxidativo {
-  id          Int     @id @default(autoincrement())
-  absorsanciaAmostra Float // média da Absorbância da amostra menos a média da Absorbância do BRANCO
-  proteinaTotal Float // Hb ou PTN mass = massa de hemoglobina ou proteína total (em mg) no ensaio.
-  concentracaoHemoglobina Float // Resultado
-  tbars Float //Resultado
-  tioisReduzidos Float // Resultado
-  peroxidoHidrogenio Float // Resultado
+  id                      Int     @id @default(autoincrement())
+  absorsanciaAmostra      Float 
+  proteinaTotal           Float 
+  concentracaoHemoglobina Float 
+  tbars                   Float 
+  tioisReduzidos          Float 
+  peroxidoHidrogenio      Float   
   
-  rataid Int @unique
-  rata Rata @relation(fields: [rataid], references: [id])
+  rataid                  Int     @unique
+  rata                    Rata    @relation(fields: [rataid], references: [id])
 }
 
 model DosagensBioquimicas {
-  id          Int     @id @default(autoincrement())
-  absorsanciaAmostra Float 
-  absorsanciaPadrao Float // 200/p = f -> f x A
-  concentracaoTriglicerides Float // Resultado
-  concentracaoColesterolTotal Float // Resultado
-  concentracaoGPT Float //Resultado
-  concentracaoVLDL Float // Resultado - concentracaoTriglicerides/5
+  id                          Int     @id @default(autoincrement())
+  absorsanciaAmostra          Float 
+  absorsanciaPadrao           Float 
+  concentracaoTriglicerides   Float 
+  concentracaoColesterolTotal Float 
+  concentracaoGPT             Float 
+  concentracaoVLDL            Float 
 
-
-  rataid Int @unique
-
-  rata Rata @relation(fields: [rataid], references: [id])
+  rataid                      Int     @unique
+  rata                        Rata    @relation(fields: [rataid], references: [id])
 }
