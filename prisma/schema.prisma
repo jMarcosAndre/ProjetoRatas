@@ -12,6 +12,12 @@ enum SistemaRole {
   USER
 }
 
+enum ProjetoStatus {
+  EM_CURSO
+  CONCLUIDO
+  INTERROMPIDO
+}
+
 enum ProjetoRoleType {
   RESPONSAVEL
   COLABORADOR
@@ -44,6 +50,7 @@ model Projeto {
   descricao            String?
   responsavelProjetoId Int           @unique 
   participantes        ProjetoRole[]
+  status               String @default("EM_ANDAMENTO")
 
   responsavel          User          @relation(fields: [responsavelProjetoId], references: [id])
 }
@@ -78,8 +85,8 @@ model Rata {
   bioquimica           DosagensBioquimicas?
   estresseOxidativo    EstresseOxidativo?
 
-  grupoId              Int 
-  grupo                Grupo         @relation(fields: [grupoId], references: [id])
+  grupoId              Int?
+  grupo                Grupo?         @relation(fields: [grupoId], references: [id])
 }
 
 model Grupo {
