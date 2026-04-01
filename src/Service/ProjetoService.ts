@@ -1,41 +1,74 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
 export class ProjetoService {
-    async criarProjeto(data: {
-        nome: string;
-        descricao?: string;
-        responsavelId: number;
-        status: 'EM ANDAMENTO' | 'CONCLUÍDO' | 'INTERROMPIDO';
-        executorId: number; // ID do usuário logado
-    }) {
-        const executor = await prisma.user.findUnique({ where: { id: data.executorId } });
-        
-        if (!executor || executor.roleSistema !== 'ADMIN') {
-            throw new Error("Ação não permitida: Apenas administradores podem criar projetos.");
+    /**
+     * Lista os projetos de acordo com o nível de acesso.
+     * ADMIN vê tudo. USER vê apenas onde é Responsável ou Colaborador.
+     */
+    async listarProjetos(userId: number, roleSistema: 'ADMIN' | 'USER') {
+        if (roleSistema === 'ADMIN') {
+            return await prisma.projeto.findMany({
+                include: { responsavel: true, participantes: true }
+            });
         }
 
-        //Criacao do projeto pelos campos pre definidos
-        return await prisma.projeto.create({
-            data: {
-                nome: data.nome,
-                descricao: data.descricao ?? null,
-                status: data.status,
-                responsavelProjetoId: data.responsavelId
+        return await prisma.projeto.findMany({
+            where: {
+                participantes: {
+                    some: { userId: userId }
+                }
+            },
+            include: { 
+                responsavel: true, 
+                participantes: {
+                    where: { userId: userId } 
+                } 
             }
         });
     }
 
-    // Metodo para o Admin gerenciar os membros (Responsável, Colaborador, Leitor)
-    async gerenciarMembros(projetoId: number, userId: number, role: 'RESPONSAVEL' | 'COLABORADOR' | 'LEITOR', executorId: number) {
-        const executor = await prisma.user.findUnique({ where: { id: executorId } });
-        if (executor?.roleSistema !== 'ADMIN') throw new Error("Não autorizado.");
+    /**
+     * Valida permissão de escrita (Criar/Editar/Deletar).
+     * ADMIN e RESPONSAVEL do projeto podem 
+     */
+    async validarPermissaoEscrita(projetoId: number, userId: number) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        
+        if (user?.roleSistema === 'ADMIN') return true;
 
-        return await prisma.projetoRole.upsert({
-            where: { userId_projetoId: { userId, projetoId } },
-            update: { role },
-            create: { userId, projetoId, role }
+        const projetoRole = await prisma.projetoRole.findUnique({
+            where: {
+                userId_projetoId: { userId, projetoId }
+            }
+        });
+
+        if (!projetoRole || projetoRole.role !== 'RESPONSAVEL') {
+            throw new Error("Acesso negado: Apenas o Responsável pelo projeto tem permissão para esta ação.");
+        }
+
+        return true;
+    }
+
+    /**
+     * Método para o Frontend decidir se mostra ou esconde botões de edição.
+     */
+    async obterPermissoesInterface(projetoId: number, userId: number) {
+        try {
+            await this.validarPermissaoEscrita(projetoId, userId);
+            return { podeEditar: true };
+        } catch {
+            return { podeEditar: false };
+        }
+    }
+
+    async editarProjeto(projetoId: number, executorId: number, dados: any) {
+        await this.validarPermissaoEscrita(projetoId, executorId);
+
+        return await prisma.projeto.update({
+            where: { id: projetoId },
+            data: dados
         });
     }
 }
+

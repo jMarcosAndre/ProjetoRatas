@@ -7,6 +7,13 @@ datasource db {
   // No Prisma 7 com prisma.config.ts, a URL não fica mais aqui
 }
 
+enum GrupoExperimental {
+  FDmod
+  NDmod
+  DMod
+  Controle
+}
+
 enum SistemaRole {
   ADMIN
   USER
@@ -18,10 +25,9 @@ enum ProjetoStatus {
   INTERROMPIDO
 }
 
-enum ProjetoRoleType {
+enum RoleProjeto{
   RESPONSAVEL
   COLABORADOR
-  LEITOR
 }
 
 enum PeriodoMorte {
@@ -38,10 +44,11 @@ model User {
   nome                String
   email               String        @unique
   password            String
-  roleSistema         SistemaRole   
+  roleSistema         SistemaRole
+  projetos            RoleProjeto[]
   
-  projetoResponsavel  Projeto?      
-  participacoes       ProjetoRole[] 
+  projetoResponsavel  Projeto?     
+  projetos     ProjetoRole[] 
 }
 
 model Projeto {
@@ -57,8 +64,8 @@ model Projeto {
 
 model ProjetoRole {
   id        Int             @id @default(autoincrement())
+  role      RoleProjeto
   userId    Int
-  role      ProjetoRoleType @default(LEITOR)
   projetoId Int
 
   user    User    @relation(fields: [userId], references: [id])
@@ -76,7 +83,8 @@ model Rata {
   dataNascimento       DateTime
   dataFinalExperimento DateTime
   inclusao             Boolean       
-  morte                Boolean?      
+  morte                Boolean?  
+  grupo                GrupoExperimental?    
   
   fetos                Feto[]
   historicoDados       DadosGerais[]
@@ -84,15 +92,6 @@ model Rata {
   totg                 TOTG?         
   bioquimica           DosagensBioquimicas?
   estresseOxidativo    EstresseOxidativo?
-
-  grupoId              Int?
-  grupo                Grupo?         @relation(fields: [grupoId], references: [id])
-}
-
-model Grupo {
-  id        Int      @id @default(autoincrement())
-  nomeGrupo String
-  ratas     Rata[]
 }
 
 model Gestacao {
