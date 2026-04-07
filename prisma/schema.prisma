@@ -37,6 +37,14 @@ enum PeriodoMorte {
   VIVO
 }
 
+enum Linhagem {
+  WISTAR
+  SPRAGUE_DAWLEY
+  SHR
+  WAR
+  OUTRO
+}
+
 // --- MODELS ---
 
 model User {
@@ -45,19 +53,18 @@ model User {
   email               String        @unique
   password            String
   roleSistema         SistemaRole
-  projetos            RoleProjeto[]
-  
-  projetoResponsavel  Projeto?     
-  projetos     ProjetoRole[] 
+  projetoResponsavel  Projeto?
+  projetos            ProjetoRole[]
 }
 
 model Projeto {
   id                   Int           @id @default(autoincrement())
   nome                 String
   descricao            String?
-  responsavelProjetoId Int           @unique 
+  responsavelProjetoId Int           @unique
   participantes        ProjetoRole[]
-  status               String @default("EM_ANDAMENTO")
+  status               ProjetoStatus @default(EM_CURSO)
+  ratas                Rata[]
 
   responsavel          User          @relation(fields: [responsavelProjetoId], references: [id])
 }
@@ -76,20 +83,24 @@ model ProjetoRole {
 
 model Rata {
   id                   Int           @id @default(autoincrement())
-  identificacao        Int 
+  identificacao        Int
   numero               Int           @unique
-  linhagem             String
+  linhagem             Linhagem
+  linhagemOutro        String?
   prenhez              Boolean       @default(false)
   dataNascimento       DateTime
   dataFinalExperimento DateTime
-  inclusao             Boolean       
-  morte                Boolean?  
-  grupo                GrupoExperimental?    
-  
+  recebeuSTZ           Boolean           @default(false)
+  inclusao             Boolean           @default(false)
+  morte                Boolean?
+  grupo                GrupoExperimental?
+  projetoId            Int
+  projeto              Projeto       @relation(fields: [projetoId], references: [id])
+
   fetos                Feto[]
   historicoDados       DadosGerais[]
   gestacao             Gestacao?
-  totg                 TOTG?         
+  totg                 TOTG?
   bioquimica           DosagensBioquimicas?
   estresseOxidativo    EstresseOxidativo?
 }
@@ -115,11 +126,12 @@ model Gestacao {
 
 model Feto {
   id            Int          @id @default(autoincrement())
-  identificacao String       
+  identificacao String
   statusPeriodo PeriodoMorte @default(VIVO)
   pesoFeto      Float?
   pesoPlacenta  Float?
-  dataMorte     DateTime?    
+  dataPrenhez   DateTime?
+  dataMorte     DateTime?
 
   rataId Int
   rata   Rata @relation(fields: [rataId], references: [id])
@@ -137,13 +149,14 @@ model DadosGerais {
 }
 
 model TOTG {
-  id          Int     @id @default(autoincrement())
-  rataId      Int     @unique 
-  t0          Float
-  t30         Float
-  t60         Float
-  t120        Float
-  diagnostico String? 
+  id               Int      @id @default(autoincrement())
+  rataId           Int      @unique
+  dataRealizacao   DateTime
+  t0               Float
+  t30              Float
+  t60              Float
+  t120             Float
+  diagnostico      String?
 
   rata Rata @relation(fields: [rataId], references: [id])
 }

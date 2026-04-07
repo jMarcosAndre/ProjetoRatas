@@ -16,7 +16,9 @@
   "license": "ISC",
   "description": "Sistema de gerenciamento de dados laboratoriais - UNESP",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.3.0",
     "@types/node-cron": "^3.0.11",
     "dotenv": "^17.3.1",
@@ -27,9 +29,19 @@
   },
   "dependencies": {
     "@prisma/client": "^7.5.0",
+    "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
     "express": "^5.2.1",
     "googleapis": "^171.4.0",
+    "jsonwebtoken": "^9.0.3",
     "node-cron": "^4.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jMarcosAndre/ProjetoRatas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jMarcosAndre/ProjetoRatas/issues"
+  },
+  "homepage": "https://github.com/jMarcosAndre/ProjetoRatas#readme"
 }

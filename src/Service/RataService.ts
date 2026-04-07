@@ -1,94 +1,129 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, GrupoExperimental, Linhagem, Prisma } from '@prisma/client'
+
 const prisma = new PrismaClient()
-import { ProjetoService } from './ProjetoService'
 
-export class RataService {
-    private projetoService = new ProjetoService();
-
-    /**
-     * Cadastro de Rata vinculado a um projeto.
-     * A trava agora verifica se o usuário é RESPONSAVEL no projeto ou ADMIN no sistema.
-     */
-    async cadastrarRata(projetoId: number, executorId: number, data: {
-        identificacao: number;
-        numero: number;
-        linhagem: 'Wistar' | 'Sprague-Dawley' | 'SHR' | 'WAR';
-        dataNascimento: Date;
-        dataFinalExperimento: Date;
-        grupo?: 'FDmod' | 'NDmod'; 
-    }) {
-        // Validação de Permissão (ProjetoService validará o RoleProjeto.RESPONSAVEL)
-        await this.projetoService.validarPermissaoEscrita(projetoId, executorId);
-
-        return await prisma.rata.create({
-            data: {
-            identificacao: data.identificacao,
-            numero: data.numero,
-            linhagem: data.linhagem,
-            dataNascimento: data.dataNascimento,
-            dataFinalExperimento: data.dataFinalExperimento,
-            inclusao: false,
-            grupo: data.grupo ?? null,
-            // O campo agora será reconhecido após os passos acima
-            projetoId: projetoId 
-        }
-    });
+type FiltroRata = {
+  projetoId?: number
+  grupo?: GrupoExperimental
+  inclusao?: boolean
+  morte?: boolean
+  linhagem?: Linhagem
+  prenhez?: boolean
+  recebeuSTZ?: boolean
 }
 
-    /**
-     * Método de Edição Geral da Rata.
-     * Essencial para o botão de edição na sua tabela.
-     */
-    async update(id: number, projetoId: number, executorId: number, dadosParaAtualizar: {
-        identificacao?: number;
-        numero?: number;
-        linhagem?: 'Wistar' | 'Sprague-Dawley' | 'SHR' | 'WAR';
-        dataNascimento?: Date;
-        dataFinalExperimento?: Date;
-        inclusao?: boolean;
-        morte?: boolean;
-        grupo?: 'FDmod' | 'NDmod' | 'Controle' | 'DMod';
-    }) {
-        // Bloqueia a edição se o usuário for apenas COLABORADOR no projetoId enviado
-        await this.projetoService.validarPermissaoEscrita(projetoId, executorId);
+export const findAllRatas = (filtros: FiltroRata = {}) => {
+  const where: Prisma.RataWhereInput = {}
 
-        const rataExiste = await prisma.rata.findUnique({ where: { id } });
-        if (!rataExiste) throw new Error("Rata não encontrada.");
+  if (filtros.projetoId !== undefined) where.projetoId = filtros.projetoId
+  if (filtros.grupo !== undefined)     where.grupo     = filtros.grupo
+  if (filtros.inclusao !== undefined)  where.inclusao  = filtros.inclusao
+  if (filtros.morte !== undefined)     where.morte     = filtros.morte
+  if (filtros.linhagem !== undefined)  where.linhagem  = filtros.linhagem
+  if (filtros.prenhez !== undefined)   where.prenhez   = filtros.prenhez
+  if (filtros.recebeuSTZ !== undefined) where.recebeuSTZ = filtros.recebeuSTZ
 
-        return await prisma.rata.update({
-            where: { id },
-            data: {
-                ...dadosParaAtualizar,
-                grupo: dadosParaAtualizar.grupo ?? undefined
-            }
-        });
-    }
-
-    /**
-     * Busca filtrada respeitando o contexto do projeto atual.
-     */
-    async buscarRatasFiltradas(filtros: {
-        projetoId: number; 
-        numero?: number;
-        linhagem?: 'Wistar' | 'Sprague-Dawley' | 'SHR' | 'WAR';
-        grupo?: 'FDmod' | 'NDmod' | 'Controle' | 'DMod';
-        inclusao?: boolean;
-    }) {
-        const whereClause: any = {
-            projetoId: filtros.projetoId
-        };
-
-        if (filtros.numero) whereClause.numero = filtros.numero;
-        if (filtros.linhagem) whereClause.linhagem = filtros.linhagem;
-        if (filtros.grupo) whereClause.grupo = filtros.grupo;
-        
-        if (filtros.inclusao !== undefined) {
-            whereClause.inclusao = filtros.inclusao;
-        }
-
-        return await prisma.rata.findMany({
-            where: whereClause,
-            orderBy: { numero: 'asc' }
-        });
-    }
+  return prisma.rata.findMany({
+    where,
+    include: {
+      gestacao:          true,
+      fetos:             { orderBy: { id: 'asc' } },
+      historicoDados:    { orderBy: { dataMedicao: 'asc' } },
+      totg:              true,
+      bioquimica:        true,
+      estresseOxidativo: true,
+    },
+    orderBy: { numero: 'asc' },
+  })
 }
+
+export const findRataById = (id: number) =>
+  prisma.rata.findUnique({
+    where: { id },
+    include: {
+      gestacao: true,
+      fetos: true,
+      historicoDados: true,
+      totg: true,
+      bioquimica: true,
+      estresseOxidativo: true,
+    },
+  })
+
+export const createRata = async (data: {
+  identificacao: number
+  numero: number
+  linhagem: Linhagem
+  linhagemOutro?: string
+  dataNascimento: Date
+  dataFinalExperimento: Date
+  recebeuSTZ: boolean
+  projetoId: number
+  prenhez?: boolean
+  morte?: boolean
+}) => {
+  if (data.linhagem === 'OUTRO' && !data.linhagemOutro?.trim())
+    throw new Error('linhagemOutro é obrigatório quando linhagem é OUTRO.')
+  if (data.linhagem !== 'OUTRO' && data.linhagemOutro)
+    throw new Error('linhagemOutro só pode ser preenchido quando linhagem é OUTRO.')
+
+  return prisma.rata.create({
+    data: {
+      identificacao: data.identificacao,
+      numero: data.numero,
+      linhagem: data.linhagem,
+      linhagemOutro: data.linhagem === 'OUTRO' ? data.linhagemOutro : null,
+      dataNascimento: data.dataNascimento,
+      dataFinalExperimento: data.dataFinalExperimento,
+      recebeuSTZ: data.recebeuSTZ,
+      inclusao: false,
+      projetoId: data.projetoId,
+      prenhez: data.prenhez ?? false,
+      morte: data.morte ?? null,
+      grupo: null,
+    },
+  })
+}
+
+export const updateRata = async (
+  id: number,
+  data: {
+    identificacao?: number
+    numero?: number
+    linhagem?: Linhagem
+    linhagemOutro?: string | null
+    dataNascimento?: Date
+    dataFinalExperimento?: Date
+    recebeuSTZ?: boolean
+    inclusao?: boolean
+    morte?: boolean
+    grupo?: GrupoExperimental | null
+    projetoId?: number
+  }
+) => {
+  if (data.linhagem === 'OUTRO' && !data.linhagemOutro?.trim())
+    throw new Error('linhagemOutro é obrigatório quando linhagem é OUTRO.')
+  if (data.linhagem !== undefined && data.linhagem !== 'OUTRO' && data.linhagemOutro)
+    throw new Error('linhagemOutro só pode ser preenchido quando linhagem é OUTRO.')
+
+  const update: Prisma.RataUpdateInput = {}
+
+  if (data.identificacao !== undefined)        update.identificacao        = data.identificacao
+  if (data.numero !== undefined)               update.numero               = data.numero
+  if (data.linhagem !== undefined) {
+    update.linhagem     = data.linhagem
+    update.linhagemOutro = data.linhagem === 'OUTRO' ? (data.linhagemOutro ?? null) : null
+  }
+  if (data.dataNascimento !== undefined)       update.dataNascimento       = data.dataNascimento
+  if (data.dataFinalExperimento !== undefined) update.dataFinalExperimento = data.dataFinalExperimento
+  if (data.recebeuSTZ !== undefined)           update.recebeuSTZ           = data.recebeuSTZ
+  if (data.inclusao !== undefined)             update.inclusao             = data.inclusao
+  if (data.morte !== undefined)                update.morte                = data.morte
+  if (data.grupo !== undefined)                update.grupo                = data.grupo
+  if (data.projetoId !== undefined)            update.projeto              = { connect: { id: data.projetoId } }
+
+  return prisma.rata.update({ where: { id }, data: update })
+}
+
+export const deleteRata = (id: number) =>
+  prisma.rata.delete({ where: { id } })
