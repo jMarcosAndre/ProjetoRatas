@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma.js'
+
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-const prisma = new PrismaClient()
+
 const SALT_ROUNDS = 10
 
 function getJwtSecret(): string {

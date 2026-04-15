@@ -1,6 +1,7 @@
-import { PrismaClient, GrupoExperimental } from '@prisma/client'
+import { prisma } from '../lib/prisma.js'
+import { GrupoExperimental  } from '@prisma/client'
 
-const prisma = new PrismaClient()
+
 
 // Critérios de diagnóstico (mg/dL) — ajuste os limiares conforme necessário
 const LIMIAR_JEJUM_DIABETICA = 126   // t0 ≥ este valor → diabética

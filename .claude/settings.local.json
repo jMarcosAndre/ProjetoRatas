@@ -3,7 +3,12 @@
     "allow": [
       "Bash(npx tsc:*)",
       "Bash(npx prisma:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(timeout 8 node --loader ts-node/esm --trace-uncaught src/server.ts)",
+      "Bash(npm uninstall *)",
+      "Bash(npm list *)",
+      "Bash(timeout 8 node --loader ts-node/esm src/server.ts)",
+      "Bash(grep -v \"DeprecationWarning\\\\|ExperimentalWarning\\\\|--import\\\\|Use \\\\`node\")"
     ]
   }
 }

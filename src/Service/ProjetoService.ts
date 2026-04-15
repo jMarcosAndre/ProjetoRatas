@@ -1,5 +1,6 @@
-import { PrismaClient, RoleProjeto, ProjetoStatus } from '@prisma/client'
-const prisma = new PrismaClient()
+import { prisma } from '../lib/prisma.js'
+import { RoleProjeto, ProjetoStatus  } from '@prisma/client'
+
 
 type FiltrosProjeto = {
     roleFiltro?: RoleProjeto  // filtra projetos onde o usuário tem esse papel

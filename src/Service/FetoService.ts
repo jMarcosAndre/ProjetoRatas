@@ -1,6 +1,7 @@
-import { PrismaClient, PeriodoMorte } from '@prisma/client'
+import { prisma } from '../lib/prisma.js'
+import { PeriodoMorte  } from '@prisma/client'
 
-const prisma = new PrismaClient()
+
 
 export const createFeto = async (rataId: number, dados: {
   statusPeriodo?: PeriodoMorte

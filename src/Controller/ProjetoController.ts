@@ -1,11 +1,12 @@
+import { prisma } from '../lib/prisma.js'
 import type { Response } from 'express'
 import type { AuthRequest } from '../middleware/auth.js'
 import { ProjetoService } from '../Service/ProjetoService.js'
 import type { RoleProjeto } from '@prisma/client'
-import { PrismaClient } from '@prisma/client'
+
 
 const service  = new ProjetoService()
-const prisma   = new PrismaClient()
+
 
 // POST /projects — só ADMIN
 export const createProjeto = async (req: AuthRequest, res: Response): Promise<void> => {

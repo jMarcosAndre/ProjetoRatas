@@ -1,6 +1,7 @@
-import { PrismaClient, Prisma } from '@prisma/client'
+import { prisma } from '../lib/prisma.js'
+import { Prisma  } from '@prisma/client'
 
-const prisma = new PrismaClient()
+
 
 type FiltroData = {
   data?: Date        // filtra registros de um dia específico (início e fim do dia)

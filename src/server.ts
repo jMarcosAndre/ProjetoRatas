@@ -66,7 +66,7 @@ app.post('/ratas/:rataId/dados-gerais', autenticar, registrarDadosHandler)
 app.delete('/dados-gerais/:id',         autenticar, deletarDadosHandler)
 
 // Fallback para o React Router (deve ficar após todas as rotas de API)
-app.get('*', (_req, res) => {
+app.get('/*splat', (_req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'))
 })
 

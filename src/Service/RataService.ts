@@ -1,6 +1,7 @@
-import { PrismaClient, GrupoExperimental, Linhagem, Prisma } from '@prisma/client'
+import { prisma } from '../lib/prisma.js'
+import { GrupoExperimental, Linhagem, Prisma  } from '@prisma/client'
 
-const prisma = new PrismaClient()
+
 
 type FiltroRata = {
   projetoId?: number
@@ -26,12 +27,10 @@ export const findAllRatas = (filtros: FiltroRata = {}) => {
   return prisma.rata.findMany({
     where,
     include: {
-      gestacao:          true,
-      fetos:             { orderBy: { id: 'asc' } },
-      historicoDados:    { orderBy: { dataMedicao: 'asc' } },
-      totg:              true,
-      bioquimica:        true,
-      estresseOxidativo: true,
+      gestacao:       true,
+      fetos:          { orderBy: { id: 'asc' } },
+      historicoDados: { orderBy: { dataMedicao: 'asc' } },
+      totg:           true,
     },
     orderBy: { numero: 'asc' },
   })
@@ -41,12 +40,10 @@ export const findRataById = (id: number) =>
   prisma.rata.findUnique({
     where: { id },
     include: {
-      gestacao: true,
-      fetos: true,
-      historicoDados: true,
-      totg: true,
-      bioquimica: true,
-      estresseOxidativo: true,
+      gestacao:       true,
+      fetos:          { orderBy: { id: 'asc' } },
+      historicoDados: { orderBy: { dataMedicao: 'asc' } },
+      totg:           true,
     },
   })
 

@@ -160,6 +160,7 @@ export function ProjetoDetailPage() {
                   <th>Nº</th>
                   <th>Linhagem</th>
                   <th>Prenhe</th>
+                  <th>Morte</th>
                   <th>STZ</th>
                   <th>TOTG</th>
                   <th>Grupo</th>
@@ -173,6 +174,11 @@ export function ProjetoDetailPage() {
                     <td>{r.numero}</td>
                     <td>{r.linhagem === 'OUTRO' ? r.linhagemOutro : LINHAGEM_LABEL[r.linhagem]}</td>
                     <td>{r.prenhez ? 'Sim' : 'Não'}</td>
+                    <td>
+                      {r.morte
+                        ? <span className="badge badge-excluida">Morta</span>
+                        : <span style={{ color: '#777' }}>—</span>}
+                    </td>
                     <td>{r.recebeuSTZ ? 'Sim' : 'Não'}</td>
                     <td>{r.totg?.diagnostico ?? '—'}</td>
                     <td>
@@ -181,9 +187,12 @@ export function ProjetoDetailPage() {
                         : '—'}
                     </td>
                     <td>
-                      <span className={`badge ${r.inclusao ? 'badge-incluida' : 'badge-excluida'}`}>
-                        {r.inclusao ? 'Incluída' : 'Excluída'}
-                      </span>
+                      {!r.totg
+                        ? <span className="badge badge-pendente">Pendente</span>
+                        : <span className={`badge ${r.inclusao ? 'badge-incluida' : 'badge-excluida'}`}>
+                            {r.inclusao ? 'Incluída' : 'Excluída'}
+                          </span>
+                      }
                     </td>
                     <td>
                       <button

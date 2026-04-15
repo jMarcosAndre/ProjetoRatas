@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  // No Prisma 7 com prisma.config.ts, a URL não fica mais aqui
 }
 
 enum GrupoExperimental {

@@ -217,6 +217,135 @@ a      { text-decoration: none; color: inherit; }
   text-align: center;
 }
 
+/* --- RATA DETAIL --- */
+.btn-voltar {
+  background: none; border: none; font-size: 0.9rem;
+  color: #555; cursor: pointer; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.rata-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; flex-wrap: wrap;
+  gap: 16px; margin-bottom: 24px;
+}
+
+.rata-header h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+.rata-sub { font-size: 0.9rem; color: #444; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.morte-toggle {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--cinza-card); border-radius: 10px;
+  padding: 14px 18px; border: 2px solid transparent;
+}
+.morte-toggle.morta { border-color: #c0392b; background: #fdf0ef; }
+.morte-toggle.viva  { border-color: #aaa; }
+
+.morte-toggle-info { display: flex; flex-direction: column; gap: 2px; }
+.morte-toggle-label { font-size: 0.78rem; color: #666; font-weight: 600; text-transform: uppercase; }
+.morte-toggle-valor { font-size: 1rem; font-weight: 700; }
+.morte-toggle.morta .morte-toggle-valor { color: #c0392b; }
+
+.btn-morte {
+  border: none; border-radius: 6px; padding: 8px 16px;
+  font-size: 0.88rem; font-weight: 600; transition: opacity 0.15s;
+}
+.btn-morte:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-morte.confirmar { background: #c0392b; color: white; }
+.btn-morte.confirmar:hover { opacity: 0.85; }
+.btn-morte.desfazer  { background: #e2e3e5; color: #333; }
+.btn-morte.desfazer:hover  { background: #ccc; }
+
+.aviso-fetos {
+  background: #fff3cd; border: 1px solid #ffc107;
+  border-radius: 8px; padding: 12px 16px;
+  font-size: 0.88rem; margin-bottom: 20px; color: #856404;
+}
+
+.secao { margin-bottom: 28px; }
+
+.secao-titulo {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.secao-titulo h3 { font-size: 1.1rem; font-weight: 700; }
+
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px; background: var(--cinza-card); border-radius: 8px; padding: 16px;
+}
+.info-grid > div { display: flex; flex-direction: column; gap: 3px; }
+.info-label { font-size: 0.78rem; font-weight: 600; color: #666; text-transform: uppercase; }
+
+/* --- CADASTRO --- */
+.abas-cadastro {
+  display: flex;
+  border-bottom: 2px solid var(--cinza-borda);
+  margin-bottom: 24px;
+  gap: 2px;
+}
+
+.abas-cadastro button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.abas-cadastro button:hover { color: var(--preto); }
+.abas-cadastro button.ativo {
+  color: var(--preto);
+  border-bottom-color: var(--preto);
+  font-weight: 700;
+}
+
+.form-cadastro {
+  background: var(--cinza-card);
+  border-radius: 10px;
+  padding: 28px;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-cadastro textarea {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  font-family: var(--fonte);
+  background: var(--branco);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.form-cadastro textarea:focus { border-color: var(--azul); }
+
+.form-cadastro select {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  background: var(--branco);
+  outline: none;
+}
+
+.ok-msg {
+  color: #155724;
+  background: #d4edda;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+
 /* --- FILTROS RATA --- */
 .filtros-panel {
   background: var(--cinza-card);

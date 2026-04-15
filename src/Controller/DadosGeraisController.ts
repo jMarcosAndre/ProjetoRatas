@@ -1,10 +1,11 @@
+import { prisma } from '../lib/prisma.js'
 import type { Response } from 'express'
 import type { AuthRequest } from '../middleware/auth.js'
 import { registrarDados, listarDados, deletarDados } from '../Service/DadosGeraisService.js'
 import { podeEscreverNoProjeto, projetoIdDaRata } from '../utils/permissao.js'
-import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+
+
 
 async function podeEscrever(userId: number, roleSistema: string, rataId: number): Promise<boolean> {
   const projetoId = await projetoIdDaRata(rataId)
