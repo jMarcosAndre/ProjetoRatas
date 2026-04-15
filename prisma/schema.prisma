@@ -101,8 +101,22 @@ model Rata {
   historicoDados       DadosGerais[]
   gestacao             Gestacao?
   totg                 TOTG?
-  bioquimica           DosagensBioquimicas?
-  estresseOxidativo    EstresseOxidativo?
+
+  // Estresse oxidativo
+  hemoglobina          Hemoglobina?
+  proteinaTotal        ProteinaTotal?
+  tbars                TBARS?
+  tioisReduzidos       TioisReduzidos?
+  sod                  SOD?
+  gshPx                GSHPx?
+  h2o2                 H2O2?
+
+  // Dosagens bioquímicas
+  triglicerides        Triglicerides?
+  colesterolTotal      ColesterolTotal?
+  gpt                  GPT?
+  got                  GOT?
+  vldl                 VLDL?
 }
 
 model Gestacao {
@@ -161,28 +175,110 @@ model TOTG {
   rata Rata @relation(fields: [rataId], references: [id])
 }
 
-model EstresseOxidativo {
-  id                      Int     @id @default(autoincrement())
-  absorsanciaAmostra      Float 
-  proteinaTotal           Float 
-  concentracaoHemoglobina Float 
-  tbars                   Float 
-  tioisReduzidos          Float 
-  peroxidoHidrogenio      Float   
-  
-  rataid                  Int     @unique
-  rata                    Rata    @relation(fields: [rataid], references: [id])
+// --- ESTRESSE OXIDATIVO ---
+
+model Hemoglobina {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absBranco     Float
+  concentracao  Float?  // calculado
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
 }
 
-model DosagensBioquimicas {
-  id                          Int     @id @default(autoincrement())
-  absorsanciaAmostra          Float 
-  absorsanciaPadrao           Float 
-  concentracaoTriglicerides   Float 
-  concentracaoColesterolTotal Float 
-  concentracaoGPT             Float 
-  concentracaoVLDL            Float 
+model ProteinaTotal {
+  id            Int    @id @default(autoincrement())
+  valor         Float  // input do usuário (denominador alternativo ao Hb)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
 
-  rataid                      Int     @unique
-  rata                        Rata    @relation(fields: [rataid], references: [id])
+model TBARS {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absBranco     Float
+  concentracao  Float?  // calculado (nM/mg Hb ou PTN)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model TioisReduzidos {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absBranco     Float
+  concentracao  Float?  // calculado (mM/mg Hb ou PTN)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model SOD {
+  id                  Int    @id @default(autoincrement())
+  percentAutoxidacao  Float  // % auto-oxidação do pirogalol na amostra
+  volumeAmostra       Float  // volume (mL) que inibe 50% do pirogalol
+  atividade           Float?  // calculado (UI/g Hb)
+  rataid              Int    @unique
+  rata                Rata   @relation(fields: [rataid], references: [id])
+}
+
+model GSHPx {
+  id            Int    @id @default(autoincrement())
+  leitura1      Float  // leituras A340 consecutivas
+  leitura2      Float
+  leitura3      Float
+  leitura4      Float
+  atividade     Float?  // calculado (mM/min/mg Hb ou PTN)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model H2O2 {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absBranco     Float
+  concentracao  Float?  // calculado (µM/mg Hb ou PTN)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+// --- DOSAGENS BIOQUÍMICAS ---
+
+model Triglicerides {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absPadrao     Float
+  concentracao  Float?  // calculado (mg/dL)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model ColesterolTotal {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  absPadrao     Float
+  concentracao  Float?  // calculado (mg/dL)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model GPT {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  concentracao  Float?  // calculado (U/L)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model GOT {
+  id            Int    @id @default(autoincrement())
+  absAmostra    Float
+  concentracao  Float?  // calculado (U/L)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
+}
+
+model VLDL {
+  id            Int    @id @default(autoincrement())
+  concentracao  Float?  // calculado (triglicérides / 5)
+  rataid        Int    @unique
+  rata          Rata   @relation(fields: [rataid], references: [id])
 }

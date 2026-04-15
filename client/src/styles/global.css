@@ -1,0 +1,319 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cinza-fundo:   #d9d9d9;
+  --cinza-card:    #c8c8c8;
+  --cinza-borda:   #aaa;
+  --azul:          #4da6ff;
+  --azul-hover:    #2990f5;
+  --preto:         #111;
+  --branco:        #fff;
+  --fonte:         'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  font-family: var(--fonte);
+  background: var(--cinza-fundo);
+  color: var(--preto);
+  min-height: 100vh;
+}
+
+button { cursor: pointer; font-family: var(--fonte); }
+input  { font-family: var(--fonte); }
+a      { text-decoration: none; color: inherit; }
+
+/* --- HEADER --- */
+.header {
+  display: flex;
+  align-items: stretch;
+  background: var(--cinza-fundo);
+  border-bottom: 1px solid var(--cinza-borda);
+  height: 56px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  min-width: 160px;
+}
+
+.header-logo .back-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.header-nav {
+  display: flex;
+  flex: 1;
+}
+
+.header-nav button {
+  flex: 1;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--cinza-borda);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0 16px;
+  transition: background 0.15s;
+}
+
+.header-nav button:hover    { background: rgba(0,0,0,0.06); }
+.header-nav button.ativo    { background: var(--preto); color: var(--branco); }
+
+/* --- PAGE WRAPPER --- */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 16px;
+}
+
+.page-titulo {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* --- SEARCH --- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--cinza-card);
+  border-radius: 24px;
+  padding: 8px 16px;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-bar .icon { font-size: 1.1rem; color: #555; }
+
+/* --- PROJECT CARD --- */
+.project-card {
+  background: var(--cinza-card);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.project-card-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.project-card-nome {
+  flex: 1;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.btn-acessar {
+  background: var(--azul);
+  color: var(--branco);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.btn-acessar:hover { background: var(--azul-hover); }
+
+.btn-chevron {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  padding: 2px 6px;
+  color: #444;
+  transition: transform 0.2s;
+}
+.btn-chevron.aberto { transform: rotate(180deg); }
+
+.project-card-body {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--cinza-borda);
+  font-size: 0.9rem;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* --- LOGIN --- */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cinza-fundo);
+}
+
+.login-card {
+  background: var(--cinza-card);
+  border-radius: 12px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-card h1 { text-align: center; font-size: 1.5rem; margin-bottom: 8px; }
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label { font-size: 0.85rem; font-weight: 600; }
+
+.campo input {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  background: var(--branco);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.campo input:focus { border-color: var(--azul); }
+
+.btn-primario {
+  background: var(--preto);
+  color: var(--branco);
+  border: none;
+  border-radius: 6px;
+  padding: 11px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 4px;
+  transition: opacity 0.15s;
+}
+.btn-primario:hover    { opacity: 0.85; }
+.btn-primario:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.erro-msg {
+  color: #c0392b;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* --- FILTROS RATA --- */
+.filtros-panel {
+  background: var(--cinza-card);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.filtro-grupo label { font-size: 0.82rem; font-weight: 600; color: #444; }
+
+.filtro-grupo select {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.9rem;
+  background: var(--branco);
+  outline: none;
+}
+
+.btn-limpar {
+  background: none;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  color: #555;
+  transition: background 0.15s;
+}
+.btn-limpar:hover { background: rgba(0,0,0,0.07); }
+
+/* --- TABELA RATAS --- */
+.tabela-wrapper { overflow-x: auto; }
+
+.tabela-ratas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.tabela-ratas th {
+  background: var(--cinza-card);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--cinza-borda);
+  white-space: nowrap;
+}
+
+.tabela-ratas td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #ddd;
+  background: var(--branco);
+}
+
+.tabela-ratas tr:hover td { background: #f4f4f4; }
+
+.badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.badge-incluida  { background: #d4edda; color: #155724; }
+.badge-excluida  { background: #f8d7da; color: #721c24; }
+.badge-pendente  { background: #fff3cd; color: #856404; }
+
+.badge-dmod     { background: #cce5ff; color: #004085; }
+.badge-controle { background: #e2e3e5; color: #383d41; }
+.badge-fdmod    { background: #d1ecf1; color: #0c5460; }
+.badge-ndmod    { background: #ffeeba; color: #856404; }
+
+.btn-ver {
+  background: var(--azul);
+  color: var(--branco);
+  border: none;
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  transition: background 0.15s;
+}
+.btn-ver:hover { background: var(--azul-hover); }
+
+.sem-dados {
+  text-align: center;
+  padding: 32px;
+  color: #777;
+  font-style: italic;
+}

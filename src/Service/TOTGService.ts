@@ -40,24 +40,36 @@ export const upsertTOTG = async (rataId: number, dados: DadosTOTG) => {
   // --- Classificação automática da rata ---
   let inclusaoSugerida: boolean
   let grupoSugerido: GrupoExperimental | null
+  let grupoLinhagem = false
 
-  if (!rata.recebeuSTZ) {
-    // Não recebeu STZ → sempre Controle (TOTG serve apenas para confirmar normalidade)
+  if (rata.grupo === 'FDmod' || rata.grupo === 'NDmod') {
+    // Linhagem pré-definida: grupo mantido, inclusão fica a cargo do usuário
+    grupoSugerido    = rata.grupo
+    inclusaoSugerida = rata.inclusao
+    grupoLinhagem    = true
+  } else if (!rata.recebeuSTZ && diagnosticoFinal === 'NORMAL') {
+    // Sem STZ + sem alteração → Controle
     inclusaoSugerida = true
     grupoSugerido    = 'Controle'
-  } else if (diagnosticoFinal === 'DIABETICA') {
-    // Recebeu STZ e é diabética → incluída; mantém grupo já definido ou sugere DMod
+  } else if (!rata.recebeuSTZ && diagnosticoFinal === 'DIABETICA') {
+    // Sem STZ + com alteração → excluída (resultado inesperado)
+    inclusaoSugerida = false
+    grupoSugerido    = null
+  } else if (rata.recebeuSTZ && diagnosticoFinal === 'DIABETICA') {
+    // Com STZ + com alteração → DMod
     inclusaoSugerida = true
     grupoSugerido    = rata.grupo ?? GRUPO_SUGERIDO_STZ_DIABETICA
   } else {
-    // Recebeu STZ mas NÃO ficou diabética → excluída do experimento
+    // Com STZ + sem alteração → excluída
     inclusaoSugerida = false
     grupoSugerido    = null
   }
 
   await prisma.rata.update({
     where: { id: rataId },
-    data:  { inclusao: inclusaoSugerida, grupo: grupoSugerido },
+    data:  grupoLinhagem
+      ? { grupo: grupoSugerido }                          // não altera inclusao
+      : { inclusao: inclusaoSugerida, grupo: grupoSugerido },
   })
 
   return {
@@ -67,6 +79,7 @@ export const upsertTOTG = async (rataId: number, dados: DadosTOTG) => {
       inclusao:     inclusaoSugerida,
       grupo:        grupoSugerido,
       calculadoAutomaticamente: dados.diagnostico === undefined,
+      grupoPreservado: grupoLinhagem,
     },
   }
 }

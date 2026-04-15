@@ -48,6 +48,13 @@ export class UserService {
         }
     }
 
+    async findById(id: number) {
+        return prisma.user.findUnique({
+            where: { id },
+            select: { id: true, nome: true, email: true, roleSistema: true }
+        })
+    }
+
     async listAll(executorId: number) {
         const executor = await prisma.user.findUnique({ where: { id: executorId } })
         if (!executor || executor.roleSistema !== 'ADMIN') {

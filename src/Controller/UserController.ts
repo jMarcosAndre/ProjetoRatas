@@ -36,6 +36,18 @@ export const createUser = async (req: AuthRequest, res: Response): Promise<void>
     }
 }
 
+// GET /users/me — usuário autenticado
+export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const user = await service.findById(req.userId!)
+        if (!user) { res.status(404).json({ message: 'Usuário não encontrado.' }); return }
+        res.json(user)
+    } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Erro ao buscar usuário.'
+        res.status(400).json({ message: msg })
+    }
+}
+
 // GET /users — só ADMIN
 export const listUsers = async (req: AuthRequest, res: Response): Promise<void> => {
     try {

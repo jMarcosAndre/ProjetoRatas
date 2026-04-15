@@ -1,9 +1,11 @@
 import 'dotenv/config'
 import express from 'express'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 import { autenticar, apenasAdmin } from './middleware/auth.js'
 
-import { login, createUser, listUsers } from './Controller/UserController.js'
+import { login, createUser, listUsers, getMe } from './Controller/UserController.js'
 import { createProjeto, listProjetos, editProjeto, deleteProjeto, addColaborador, getPermissoes, getDashboard } from './Controller/ProjetoController.js'
 import { getAll, getById, create, update, remove } from './Controller/RataController.js'
 import { getGestacaoHandler, upsertGestacaoHandler } from './Controller/GestacaoController.js'
@@ -11,15 +13,22 @@ import { listFetosHandler, createFetoHandler, updateFetoHandler, deleteFetoHandl
 import { listarDadosHandler, registrarDadosHandler, deletarDadosHandler } from './Controller/DadosGeraisController.js'
 import { getTOTGHandler, upsertTOTGHandler } from './Controller/TOTGController.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 const app = express()
 app.use(express.json())
+
+// Serve o build do React (produção / rede local)
+const publicDir = path.join(__dirname, '..', 'public')
+app.use(express.static(publicDir))
 
 // --- Auth ---
 app.post('/auth/login', login)
 
-// --- Usuários (só ADMIN) ---
-app.post('/users',  autenticar, apenasAdmin, createUser)
-app.get('/users',   autenticar, apenasAdmin, listUsers)
+// --- Usuários ---
+app.get('/users/me', autenticar, getMe)
+app.post('/users',   autenticar, apenasAdmin, createUser)
+app.get('/users',    autenticar, apenasAdmin, listUsers)
 
 // --- Projetos ---
 app.post('/projects',                          autenticar, apenasAdmin, createProjeto)
@@ -55,6 +64,11 @@ app.put('/ratas/:rataId/totg', autenticar, upsertTOTGHandler)
 app.get('/ratas/:rataId/dados-gerais',  autenticar, listarDadosHandler)
 app.post('/ratas/:rataId/dados-gerais', autenticar, registrarDadosHandler)
 app.delete('/dados-gerais/:id',         autenticar, deletarDadosHandler)
+
+// Fallback para o React Router (deve ficar após todas as rotas de API)
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'))
+})
 
 const PORT = process.env.PORT ?? 3000
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`))

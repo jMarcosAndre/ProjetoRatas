@@ -72,7 +72,7 @@ export const createRata = async (data: {
       identificacao: data.identificacao,
       numero: data.numero,
       linhagem: data.linhagem,
-      linhagemOutro: data.linhagem === 'OUTRO' ? data.linhagemOutro : null,
+      linhagemOutro: data.linhagem === 'OUTRO' ? (data.linhagemOutro ?? null) : null,
       dataNascimento: data.dataNascimento,
       dataFinalExperimento: data.dataFinalExperimento,
       recebeuSTZ: data.recebeuSTZ,

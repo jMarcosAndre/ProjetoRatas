@@ -16,18 +16,12 @@ export const listFetosHandler = async (req: AuthRequest, res: Response): Promise
 // POST /ratas/:rataId/fetos
 export const createFetoHandler = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { identificacao, statusPeriodo, pesoFeto, pesoPlacenta, dataPrenhez, dataMorte } = req.body
-    if (!identificacao) {
-      res.status(400).json({ message: 'identificacao é obrigatória.' })
-      return
-    }
+    const { statusPeriodo, pesoFeto, pesoPlacenta, dataMorte } = req.body
     const feto = await createFeto(Number(req.params.rataId), {
-      identificacao,
       statusPeriodo,
       pesoFeto,
       pesoPlacenta,
-      dataPrenhez: dataPrenhez ? new Date(dataPrenhez) : undefined,
-      dataMorte:   dataMorte   ? new Date(dataMorte)   : undefined,
+      ...(dataMorte && { dataMorte: new Date(dataMorte) }),
     })
     res.status(201).json(feto)
   } catch (err: unknown) {
@@ -39,11 +33,10 @@ export const createFetoHandler = async (req: AuthRequest, res: Response): Promis
 // PUT /fetos/:id
 export const updateFetoHandler = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { dataPrenhez, dataMorte, ...rest } = req.body
+    const { dataMorte, ...rest } = req.body
     const feto = await updateFeto(Number(req.params.id), {
       ...rest,
-      ...(dataPrenhez !== undefined && { dataPrenhez: dataPrenhez ? new Date(dataPrenhez) : null }),
-      ...(dataMorte   !== undefined && { dataMorte:   dataMorte   ? new Date(dataMorte)   : null }),
+      ...(dataMorte !== undefined && { dataMorte: dataMorte ? new Date(dataMorte) : null }),
     })
     res.json(feto)
   } catch (err: unknown) {
