@@ -8,7 +8,10 @@
       "Bash(npm uninstall *)",
       "Bash(npm list *)",
       "Bash(timeout 8 node --loader ts-node/esm src/server.ts)",
-      "Bash(grep -v \"DeprecationWarning\\\\|ExperimentalWarning\\\\|--import\\\\|Use \\\\`node\")"
+      "Bash(grep -v \"DeprecationWarning\\\\|ExperimentalWarning\\\\|--import\\\\|Use \\\\`node\")",
+      "Bash(node --loader ts-node/esm src/server.ts)",
+      "Bash(timeout 10 npx nodemon --loader ts-node/esm src/server.ts)",
+      "Bash(timeout 8 npm run dev)"
     ]
   }
 }
